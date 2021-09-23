@@ -1,32 +1,19 @@
 package com.example.myapplication.di
 
-import com.example.myapplication.di.scope.DefaultDispatcher
-import com.example.myapplication.di.scope.IoDispatcher
-import com.example.myapplication.di.scope.MainDispatcher
+import com.example.myapplication.dispatcher.CoroutineDispatcherProvider
+import com.example.myapplication.dispatcher.RealCoroutineDispatcherProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-
-
-/**
- * Source Link: https://www.valueof.io/blog/injecting-coroutines-dispatchers-with-dagger
- */
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object DispatcherModule {
-    @DefaultDispatcher
+class DispatcherModule {
     @Provides
-    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
-
-    @IoDispatcher
-    @Provides
-    fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-    @MainDispatcher
-    @Provides
-    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
+    @Singleton
+    fun providesCoroutineDispatcher(): CoroutineDispatcherProvider {
+        return RealCoroutineDispatcherProvider()
+    }
 }

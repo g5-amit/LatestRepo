@@ -5,9 +5,11 @@
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.146875" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/full_screen_view.xml" value="0.1484375" />
         <entry key="app/src/main/res/layout/repo_activity.xml" value="0.146875" />
         <entry key="app/src/main/res/layout/repo_frag.xml" value="0.146875" />
         <entry key="app/src/main/res/layout/repo_item_lyt.xml" value="0.28802083333333334" />
+        <entry key="app/src/main/res/layout/row_loader.xml" value="0.1484375" />
         <entry key="app/src/main/res/layout/view_empty.xml" value="0.28802083333333334" />
         <entry key="app/src/main/res/layout/view_error.xml" value="0.28802083333333334" />
         <entry key="app/src/main/res/layout/view_loading.xml" value="0.28802083333333334" />

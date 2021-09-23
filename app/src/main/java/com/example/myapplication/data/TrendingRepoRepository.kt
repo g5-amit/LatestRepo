@@ -18,4 +18,8 @@ class TrendingRepoRepository @Inject constructor(
     override suspend fun getTrendingRepoList(): Resource<List<GitHubRepo>> {
         return remoteSource.getTrendingRepoList()
     }
+
+    override suspend fun getRefreshRepoList(): Resource<List<GitHubRepo>> {
+        return remoteSource.getTrendingRepoList()
+    }
 }

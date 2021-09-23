@@ -8,4 +8,5 @@ import com.example.myapplication.network.api.response.GitHubRepo
 * */
 interface BaseRepoRepository {
     suspend fun getTrendingRepoList(): Resource<List<GitHubRepo>>
+    suspend fun getRefreshRepoList(): Resource<List<GitHubRepo>>
 }

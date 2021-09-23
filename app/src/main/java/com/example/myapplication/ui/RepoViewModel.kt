@@ -5,8 +5,11 @@ import com.example.myapplication.data.TrendingRepoRepository
 import com.example.myapplication.network.util.Resource
 import com.example.myapplication.ui.model.RepoItemUIModel
 import com.example.myapplication.usecase.RepoUseCaseImpl
+import com.example.myapplication.utility.Sort
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,7 +21,7 @@ class RepoViewModel @Inject constructor(
     /**
      *Default Sorting order is Stars
      */
-//    private var sortOrder = SortUtils.Sort.STAR
+    private var sortOrder = Sort.NAME
 
     /**
      * Request a snackbar to display a string.
@@ -75,7 +78,7 @@ class RepoViewModel @Inject constructor(
 
     fun getTrendingRepoList(){
         viewModelScope.launch {
-            when(val res= repoUseCase.getTrendingRepoList()){
+            when(val res= repoUseCase.getTrendingRepoList(sortOrder)){
                 is Resource.Success->{
                     res.data?.let{
                         _repoList.value = it
@@ -92,6 +95,35 @@ class RepoViewModel @Inject constructor(
                 }
             }
         }
+    }
 
+    /**
+     * Refresh Repo Data by calling Network Api
+     * Once Api response is updated into DB, it will reflect on UI using Room DB reactive Flow
+     * This method will be called If Data is stale, swipe refreshed, or DB data is empty
+     * */
+    fun doRefreshData(isEmptyViewRequired: Boolean){
+        viewModelScope.launch {
+            val res= repoUseCase.getRefreshRepoList(sortOrder)
+            _swipeLoader.value = false
+            _spinner.value = false
+            when(res){
+                is Resource.Success->{
+                    res.data?.let{
+                        _repoList.value = it
+                    }
+                }
+                is Resource.Offline ->{
+                    if(isEmptyViewRequired)
+                        _emptyView.value = true
+                }
+                is Resource.Loading->{
+                    _spinner.value = true
+                }
+                is Resource.Error ->{
+                    _error.value = res.msg
+                }
+            }
+        }
     }
 }

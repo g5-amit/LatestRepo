@@ -36,6 +36,17 @@ class TrendingRepoAdapter @Inject constructor(
         notifyDataSetChanged()
     }
 
+    fun addItems(newItems: List<RepoItemUIModel>){
+        val startIndex = items.size
+        this.items.addAll(newItems)
+        notifyItemRangeInserted(startIndex, newItems.size)
+    }
+
+    fun clearItems(){
+        this.items.clear()
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder {
         val binding: RepoItemLytBinding = RepoItemLytBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RepoViewHolder(binding)

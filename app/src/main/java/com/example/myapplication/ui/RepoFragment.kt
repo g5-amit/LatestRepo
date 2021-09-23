@@ -22,6 +22,12 @@ class RepoFragment: BaseFragment() {
 
     private lateinit var binding: RepoFragBinding
 
+    /**
+     * Variables to Support paging
+     */
+    private var isMoreItems = true
+    private var isLoading = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,7 +40,7 @@ class RepoFragment: BaseFragment() {
     override fun onViewCreated(root: View, savedInstanceState: Bundle?) {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
-//        binding.swipeRefreshLayout.setOnRefreshListener(this::swipeRefresh)
+        binding.swipeRefreshLayout.setOnRefreshListener(this::swipeRefresh)
         binding.recyclerView.layoutManager= LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = repoAdapter
         setUpObservers()
@@ -45,7 +51,22 @@ class RepoFragment: BaseFragment() {
         binding.layoutError.errorRetry.setOnClickListener {
             fetchTrendingRepo()
         }
+
         fetchTrendingRepo()
+
+        binding.recyclerView.addOnScrollListener(object: PaginationListener(binding.recyclerView.layoutManager as LinearLayoutManager){
+            override fun loadMoreItems() {
+                isLoading = true
+                showHideLoader(isLoading)
+                viewModel.getTrendingRepoList()
+            }
+            override fun isLastPage(): Boolean {
+                return !isMoreItems
+            }
+            override fun isLoading(): Boolean {
+                return  isLoading
+            }
+        })
     }
 
     private fun setUpObservers() {
@@ -82,13 +103,23 @@ class RepoFragment: BaseFragment() {
         viewModel.getTrendingRepoList()
     }
 
-//    private fun swipeRefresh() {
-//        viewModel.doRefreshData(false)
-//    }
+    private fun swipeRefresh() {
+        isMoreItems = true
+        isLoading = false
+        repoAdapter.clearItems()
+        viewModel.doRefreshData(false)
+    }
 
     private fun inflateData(list: List<RepoItemUIModel>) {
         if(list.isNotEmpty()){
-            repoAdapter.setItems(list)
+            isMoreItems = list.size >= PaginationListener.PAGE_SIZE
+            isLoading = false
+            showHideLoader(false)
+            if(repoAdapter.itemCount>0){
+                repoAdapter.addItems(list)
+            }else {
+                repoAdapter.setItems(list)
+            }
             return
         }
     }
